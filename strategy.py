@@ -30,13 +30,20 @@ class aStrategy():
 
     def is_dirty_data(self, data):
         # 'UpdateTime': '13:49:13'
+        exch = symbol_exchange_map.get(data["InstrumentID"],"")
+        
         now = datetime.datetime.now()
 
         Time = data["UpdateTime"]
         ActionDay = data["ActionDay"]
         year = int(ActionDay[:4])
         month = int(ActionDay[4:6])
-        day = int(ActionDay[6:8])
+        if exch == "":
+            print("exch = ''",data)
+        elif exch == "DCE":
+            day = datetime.datetime.now().day
+        else:
+            day = int(ActionDay[6:8])
         hour, minute, second = Time.split(":")
         hour = int(hour)
         minute = int(minute)

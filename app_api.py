@@ -2,7 +2,7 @@ from api_package import *
 import time,os,queue,threading,re,datetime, pickle,sys,paramiko,json
 import pandas as pd;import numpy as np
 
-
+symbol_exchange_map = {}
 class app_ctp_mdapi(CtpMdApi):
     def __init__(self, TickQ,):
         """Constructor"""
@@ -49,6 +49,7 @@ class app_ctp_tdapi (CtpTdApi):
     def onRspQryInstrument(self, data: dict, error: dict, reqid: int, last: bool):
         if   data["ProductClass"] =="3" or data["ProductClass"]== "5":
             return
+        
         elif data["ProductClass"] =="2":
             self.Option_ContractL_of_exch[data["ExchangeID"]].append(data["InstrumentID"])
             self.Option_ContractL.append(data["InstrumentID"])
@@ -57,3 +58,7 @@ class app_ctp_tdapi (CtpTdApi):
             self.Futures_ContractL_of_exch[data["ExchangeID"]].append(data["InstrumentID"])
             self.Futures_ContractL.append(data["InstrumentID"])
             self.Futures_ContractL_raw.append(data)
+        symbol_exchange_map[data["InstrumentID"]] = data["ExchangeID"]
+
+        if last:
+            print("合约信息查询成功")
